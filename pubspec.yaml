@@ -17,6 +17,7 @@ dependencies:
   intl: ^0.20.2
   flutter_slidable: ^4.0.0
   flutter_spinkit: ^5.2.1
+  majestic_ui: ^1.0.3
 
 
 dev_dependencies:

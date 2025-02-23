@@ -18,8 +18,8 @@ class Todo {
 }
 
 class DatabaseServices {
-  final CollectionReference todoCollection =
-      FirebaseFirestore.instance.collection('todos');
+  final CollectionReference todoCollection = FirebaseFirestore.instance
+      .collection('todos');
 
   User? user = FirebaseAuth.instance.currentUser;
 
@@ -47,7 +47,7 @@ class DatabaseServices {
     });
   }
 
-  // Update the status 
+  // Update the status
   Future<void> updateTodoStatus(String id, bool completed) async {
     return await todoCollection.doc(id).update({'completed': completed});
   }

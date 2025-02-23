@@ -3,12 +3,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 class AuthServices {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  Future<User?> signInWithEmailAndPassword(
+  Future<User?> signInWithEmailAndPassword( // signInWithEmailAndPassword method used in login page is defined here
     String email,
     String password,
   ) async {
     try {
       UserCredential result = await _auth.signInWithEmailAndPassword(
+        //When a user successfully logs in, Firebase returns a UserCredential object, which contains:User information → user (Email, UID, Display Name, etc.)Login method → (Email/Password, Google, Facebook, etc.)Token data → Used for authentication
         email: email,
         password: password,
       );
