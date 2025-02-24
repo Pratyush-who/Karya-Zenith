@@ -15,35 +15,81 @@ void showTaskDialog(BuildContext context, {Todo? todo}) {
     context: context,
     builder: (context) {
       return AlertDialog(
-        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+        backgroundColor: const Color(0xFF1A1F38), // Dark background
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20), // Rounded corners
+          side: BorderSide(
+            color: Colors.purple.withOpacity(0.2), // Purple border
+            width: 1,
+          ),
+        ),
         title: Text(
           todo == null ? 'Add Task' : 'Edit Task',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500),
+          style: const TextStyle(
+            color: Colors.white, // White text
+            fontWeight: FontWeight.bold,
+            fontSize: 24,
+          ),
         ),
         content: SingleChildScrollView(
-          child: Container(
+          child: SizedBox(
             width: MediaQuery.of(context).size.width,
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 TextField(
                   controller: titleController,
+                  style: const TextStyle(color: Colors.white), // White text
                   decoration: InputDecoration(
                     hintText: 'Title',
-                    hintStyle: TextStyle(color: Colors.black),
+                    hintStyle: TextStyle(color: Colors.white.withOpacity(0.7)), // Light hint text
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: Colors.purple.withOpacity(0.5), // Purple border
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: Colors.purple.withOpacity(0.5), // Purple border
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(
+                        color: Color(0xFF9C27B0), // Purple border
+                      ),
                     ),
                   ),
                 ),
+                const SizedBox(height: 16),
                 TextField(
                   controller: descriptionController,
+                  style: const TextStyle(color: Colors.white), // White text
+                  maxLines: 3,
                   decoration: InputDecoration(
                     hintText: 'Description',
-                    hintStyle: TextStyle(color: Colors.black),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
+                    hintStyle: TextStyle(color: Colors.white.withOpacity(0.7)), // Light hint text
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: Colors.purple.withOpacity(0.5), // Purple border
                     ),
                   ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: Colors.purple.withOpacity(0.5), // Purple border
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(
+                      color: Color(0xFF9C27B0), // Purple border
+                    ),
+                  ),
+                ),
                 ),
               ],
             ),
@@ -54,39 +100,62 @@ void showTaskDialog(BuildContext context, {Todo? todo}) {
             onPressed: () {
               Navigator.pop(context);
             },
-            child: Text('Cancel'),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(color: Colors.white70), // Light text
+            ),
           ),
           ElevatedButton(
-  onPressed: () async {
-    try {
-      // Add some basic validation
-      if (titleController.text.trim().isEmpty) {
-        return;
-      }
+            onPressed: () async {
+              try {
+                if (titleController.text.trim().isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Title cannot be empty')),
+                  );
+                  return;
+                }
 
-      // For new todo
-      if (todo == null) {
-        await databaseServices.addTodoItem(
-          title: titleController.text.trim(),
-          description: descriptionController.text.trim(),
-          completed: false,
-          timeStamp: Timestamp.now(),
-        );
-        print('Todo added successfully'); // Add this for debugging
-      } else {
-        await databaseServices.updateTodo(
-          todo.id,
-          titleController.text.trim(),
-          descriptionController.text.trim(),
-        );
-      }
-      Navigator.pop(context);
-    } catch (e) {
-      print('Error adding/updating todo: $e'); // Add this for debugging
-    }
-  },
-  child: Text(todo == null ? 'Add' : 'Update'),
-),
+                if (todo == null) {
+                  await databaseServices.addTodoItem(
+                    title: titleController.text.trim(),
+                    description: descriptionController.text.trim(),
+                    completed: false,
+                    timeStamp: Timestamp.now(),
+                  );
+                } else {
+                  await databaseServices.updateTodo(
+                    todo.id,
+                    titleController.text.trim(),
+                    descriptionController.text.trim(),
+                  );
+                }
+
+                Navigator.pop(context);
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(todo == null ? 'Task added' : 'Task updated'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              } catch (e) {
+                print('Error adding/updating todo: $e');
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Error: $e')),
+                );
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF9C27B0), // Purple button
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: Text(
+              todo == null ? 'Add' : 'Update',
+              style: const TextStyle(color: Colors.white),
+            ),
+          ),
         ],
       );
     },

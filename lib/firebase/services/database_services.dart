@@ -20,8 +20,10 @@ class Todo {
 class DatabaseServices {
   final CollectionReference todoCollection = FirebaseFirestore.instance
       .collection('todos');
+  User? get user => FirebaseAuth.instance.currentUser;
 
-  User? user = FirebaseAuth.instance.currentUser;
+  Stream<List<Todo>> get todos => pendingTodos;
+  // var todos;
 
   Future<DocumentReference> addTodoItem({
     required String title,
@@ -29,14 +31,18 @@ class DatabaseServices {
     required bool completed,
     required Timestamp timeStamp,
   }) async {
-    if (user == null) throw Exception('User not signed in');
+    final User? currentUser = FirebaseAuth.instance.currentUser;
+
+    if (currentUser == null) {
+      throw Exception('User not signed in');
+    }
 
     return await todoCollection.add({
       'title': title,
       'description': description,
       'completed': completed,
       'timeStamp': timeStamp,
-      'uid': user!.uid,
+      'uid': currentUser.uid, // ✅ Ensure UID is stored
     });
   }
 
